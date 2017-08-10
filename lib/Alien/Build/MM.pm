@@ -3,9 +3,9 @@ package Alien::Build::MM;
 use strict;
 use warnings;
 use Alien::Build;
-use Path::Tiny ();
-use Capture::Tiny qw( capture );
-use Carp ();
+use Importer 'Path::Tiny'    => ( path    => { -prefix => '_' } );
+use Importer 'Capture::Tiny' => ( capture => { -prefix => '_' } );
+use Importer 'Carp'          => ( croak       => { -prefix => '_' } );
 
 # ABSTRACT: Alien::Build installer code for ExtUtils::MakeMaker
 # VERSION
@@ -102,16 +102,16 @@ sub mm_args
   
   if($args{DISTNAME})
   {
-    $self->build->set_stage(Path::Tiny->new("blib/lib/auto/share/dist/$args{DISTNAME}")->absolute->stringify);
+    $self->build->set_stage(_path("blib/lib/auto/share/dist/$args{DISTNAME}")->absolute->stringify);
     $self->build->install_prop->{mm}->{distname} = $args{DISTNAME};
     my $module = $args{DISTNAME};
     $module =~ s/-/::/g;
     # See if there is an existing version installed, without pulling it into this process
-    my($old_prefix, $err, $ret) = capture { system $^X, "-M$module", -e => "print $module->dist_dir"; $? };
+    my($old_prefix, $err, $ret) = _capture { system $^X, "-M$module", -e => "print $module->dist_dir"; $? };
     if($ret == 0)
     {
       chomp $old_prefix;
-      my $file = Path::Tiny->new($old_prefix, qw( _alien alien.json ));
+      my $file = _path($old_prefix, qw( _alien alien.json ));
       if(-r $file)
       {
         my $old_runtime = eval {
@@ -128,7 +128,7 @@ sub mm_args
   }
   else
   {
-    Carp::croak "DISTNAME is required";
+    _croak "DISTNAME is required";
   }
   
   my $ab_version = '0.25';

@@ -2,10 +2,10 @@ package Alien::Build;
 
 use strict;
 use warnings;
-use Path::Tiny ();
-use Carp ();
+use Importer 'Path::Tiny' => ( path        => { -prefix => '_' } );
+use Importer 'Carp'       => ( croak       => { -prefix => '_' } );
+use Importer 'JSON::PP'   => ( decode_json => { -prefix => '_' } );
 use File::chdir;
-use JSON::PP ();
 use Env qw( @PATH );
 use Env qw( @PKG_CONFIG_PATH );
 use Config ();
@@ -44,10 +44,6 @@ Note that you will usually not usually create a L<Alien::Build> instance
 directly, but rather be using a thin installer layer, such as
 L<Alien::Build::MM> (for use with L<ExtUtils::MakeMaker>).  One of the
 goals of this project is to remain installer agnostic.
-
-=cut
-
-sub _path { goto \&Path::Tiny::path }
 
 =head1 CONSTRUCTOR
 
@@ -488,8 +484,7 @@ sub load
 
   unless(-r $alienfile)
   {
-    require Carp;
-    Carp::croak "Unable to read alienfile: $alienfile";
+    _croak "Unable to read alienfile: $alienfile";
   }
 
   my $file = _path $alienfile;
@@ -583,7 +578,7 @@ L<alienfile> and the build root (usually C<_alien>).
 sub resume
 {
   my(undef, $alienfile, $root) = @_;
-  my $h = JSON::PP::decode_json(_path("$root/state.json")->slurp);
+  my $h = _decode_json(_path("$root/state.json")->slurp);
   my $self = Alien::Build->load("$alienfile", @{ $h->{args} });
   $self->{install_prop} = $h->{install};
   $self->{runtime_prop} = $h->{runtime};
@@ -889,7 +884,7 @@ sub probe
   
   if($type !~ /^(system|share)$/)
   {
-    Carp::croak "probe hook returned something other than system or share: $type";
+    _croak "probe hook returned something other than system or share: $type";
   }
   
   $self->runtime_prop->{install_type} = $type;
@@ -1245,6 +1240,7 @@ meta object should be made before the C<probe>, C<download> or C<build> steps.
 
 package Alien::Build::Meta;
 
+use Importer 'Carp'       => ( croak => { -prefix => '_' } );
 our @CARP_NOT = qw( alienfile );
 
 sub new
@@ -1339,7 +1335,7 @@ sub interpolator
   {
     if(defined $self->{intr})
     {
-      Carp::croak "tried to set interpolator twice";
+      _croak "tried to set interpolator twice";
     }
     if(ref $new)
     {
@@ -1411,7 +1407,7 @@ sub _instr
   }
   else
   {
-    Carp::croak "type not supported as a hook";
+    _croak "type not supported as a hook";
   }
 }
 
@@ -1530,7 +1526,7 @@ sub call_hook
     }
     elsif(!$args{all})
     {
-      Carp::croak "No hooks registered for $name";
+      _croak "No hooks registered for $name";
     }
   }
   

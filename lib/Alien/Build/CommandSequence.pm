@@ -2,7 +2,7 @@ package Alien::Build::CommandSequence;
 
 use strict;
 use warnings;
-use Capture::Tiny qw( capture );
+use Importer 'Capture::Tiny' => ( capture => { -prefix => '_' } );
 
 # ABSTRACT: Alien::Build command sequence
 # VERSION
@@ -69,7 +69,7 @@ sub _run_with_code
   my $code = pop @cmd;
   $build->log("+ @cmd");
   my %args = ( command => \@cmd );
-  ($args{out}, $args{err}, $args{exit}) = capture {
+  ($args{out}, $args{err}, $args{exit}) = _capture {
     system @cmd; $?
   };
   $build->log("[output consumed by Alien::Build recipe]");

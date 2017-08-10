@@ -33,6 +33,7 @@ $modules{$_} = $_ for qw(
   IO::Socket::SSL
   IO::Uncompress::Bunzip2
   IO::Zlib
+  Importer
   JSON::PP
   LWP
   LWP::Protocol::https
