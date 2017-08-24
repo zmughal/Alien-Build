@@ -28,6 +28,9 @@ cache:
     - $HOME/mylib
 
 env:
+  include:
+    - perl: "system"
+      os: osx
   global:
     - ALIEN_BASE_NO_ABMB=1
   matrix:
