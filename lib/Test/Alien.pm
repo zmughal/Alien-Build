@@ -524,6 +524,7 @@ sub xs_ok
         my %config = %{ $xs->{cbuilder_config} };
         my $lddlflags = join(' ', grep !/^-l/, shellwords map { _flags $_, 'libs' } @aliens) . " $Config{lddlflags}";
         $config{lddlflags} = defined $config{lddlflags} ? "$lddlflags $config{lddlflags}" : $lddlflags;
+        $config{lddlflags} = "-Wl,--enable-auto-image-base $config{lddlflags}";
         \%config;
       },
     );
