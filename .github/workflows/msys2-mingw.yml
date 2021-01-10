@@ -67,4 +67,14 @@ jobs:
       - name: Run Tests
         run: |
           export PATH="/c/cx/bin:$PATH"
-          perl -S dzil test -v
+          perl -S dzil test -v || true
+          echo "Starting loop";
+          total=0
+          success=0
+          for ((i=1;i<=32;i++)); do
+            echo $i
+            (( total++ )) || true
+            prove -l t/test_alien.t && (( success++ )) || true
+          done
+          echo "Loop of t/test_alien.t succeeded: $success / $total"
+          [ $success -eq $total ]
