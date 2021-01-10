@@ -57,14 +57,4 @@ jobs:
         run: |
           export PATH="/c/cx/bin:$PATH"
           yes | cpan App::cpanminus || true
-          cpanm -n Dist::Zilla
-          perl -S dzil authordeps --missing | perl -S cpanm -n
-          perl -S dzil listdeps --missing   | perl -S cpanm -n
-      - name: Install Dynamic Dependencies
-        run: |
-          export PATH="/c/cx/bin:$PATH"
-          perl -S dzil run --no-build 'perl -S cpanm --installdeps .'
-      - name: Run Tests
-        run: |
-          export PATH="/c/cx/bin:$PATH"
-          perl -S dzil test -v
+          cpanm --verbose YAML::XS
