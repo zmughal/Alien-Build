@@ -67,4 +67,5 @@ jobs:
       - name: Run Tests
         run: |
           export PATH="/c/cx/bin:$PATH"
+          perl -pi -e 'my $im = q/-Wl,--image-base,$spec{image_base}/; s/.*\Q$im\E.*//' $( perl -MExtUtils::CBuilder::Platform::Windows::GCC -E 'say $INC{"ExtUtils/CBuilder/Platform/Windows/GCC.pm"}' )
           perl -S dzil test -v
